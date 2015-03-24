@@ -25,6 +25,10 @@ if (typeof Object.create !== 'function') {
       self.checkboxes = self.container.find('input[type="checkbox"]');
       self.containerOffLeft = self.container.offset().left;
       self.containerOffTop = self.container.offset().top;
+      $(window).on('resize', function(){
+        self.containerOffLeft = self.container.offset().left;
+        self.containerOffTop = self.container.offset().top;
+      });
       self.container.addClass('checkbox-range-container');
       
       if (!self.opts.noStyle) {
