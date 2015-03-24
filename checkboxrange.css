@@ -1,0 +1,127 @@
+/*! CheckboxRange CSS by Rafael Pawlos | http://rafaelpawlos.com | MIT license */
+
+.checkbox-range-container{
+  background: transparent;
+}
+.checkbox-range-container,
+.checkbox-range-container label,
+.checkbox-range-container > div{
+  position:relative;
+  cursor:default;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#checkbox-range-start,
+#checkbox-range-stop{
+  display: inline-block;
+  width:30px;
+  height:30px;
+  background:#49d;
+  border-radius:50%;
+  /* box-shadow:0 0 10px #666 inset; */
+  position:absolute;
+  left:-5px;
+  top:-5px;
+  z-index:-1;
+}
+#checkbox-range-start{
+  -webkit-animation: 0.6s ease soft-appear;
+  animation: 0.6s ease soft-appear;
+}
+#checkbox-range-stop{
+  -webkit-animation: 0.6s ease soft-appear;
+  animation: 0.2s ease soft-appear;
+}
+#checkbox-range-bound-canvas{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
+}
+#checkbox-range-bound-canvas line{
+  stroke:#49d;
+  stroke-width:30;
+  -webkit-animation: 0.6s ease soft-appear;
+  animation: 0.6s ease soft-appear;
+}
+
+@keyframes soft-appear{
+  0%{opacity:0}
+  100%{opacity:1}
+}
+
+@-webkit-keyframes soft-appear{
+  0%{opacity:0}
+  100%{opacity:1}
+}
+
+/* Checkboxes style */
+.checkbox-range-container.cr-style > div{
+  position:relative;
+}
+.checkbox-range-container.cr-style > label,
+.checkbox-range-container.cr-style input[type="checkbox"] ~ label{
+  padding: 2px 0 5px 25px;
+  display: inline-block;
+}
+.checkbox-range-container.cr-style > label input[type="checkbox"] ~ .checkbox-mask{
+  margin-left:-25px;
+}
+.checkbox-range-container.cr-style input[type="checkbox"]{
+  position:absolute;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  opacity:0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  z-index: 2;
+}
+.checkbox-range-container.cr-style input[type="checkbox"] ~ .checkbox-mask{
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 0;
+  border-radius: 4px;
+
+  background:#444;
+}
+.checkbox-range-container.cr-style input[type="checkbox"] ~ .checkbox-mask:after {
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  opacity: 0;
+  content: '';
+  position: absolute;
+  width: 9px;
+  height: 5px;
+  background: transparent;
+  top: 4px;
+  left: 4px;
+  border: 3px solid #eee;
+  border-top: none;
+  border-right: none;
+
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.checkbox-range-container.cr-style input[type="checkbox"]:hover ~ .checkbox-mask:after {
+  opacity: 0.4;
+}
+.checkbox-range-container.cr-style input[type="checkbox"]:checked ~ .checkbox-mask:after {
+  opacity: 1;
+}
