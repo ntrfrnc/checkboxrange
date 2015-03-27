@@ -23,18 +23,11 @@ if (typeof Object.create !== 'function') {
       self.opts = opts;
       self.container = $(container);
       self.checkboxes = self.container.find('input[type="checkbox"]');
-      self.containerOffLeft = self.container.offset().left;
-      self.containerOffTop = self.container.offset().top;
-      $(window).on('resize', function(){
-        self.containerOffLeft = self.container.offset().left;
-        self.containerOffTop = self.container.offset().top;
-      });
       self.container.addClass('checkbox-range-container');
       
       if (!self.opts.noStyle) {
         self.container.addClass('cr-style');
         self.createStyleMask();
-        self.delegateEventsToMask();
       }
       
       self.indexElements(self.checkboxes);
@@ -49,6 +42,9 @@ if (typeof Object.create !== 'function') {
         self.startPointIndex = self.startPoint.data(self.iKey);
         self.startPointOffLeft = self.startPoint.offset().left;
         self.startPointOffTop = self.startPoint.offset().top;
+        
+        self.containerOffLeft = self.container.offset().left;
+        self.containerOffTop = self.container.offset().top;
 
         self.assembleMarkElements();
         self.bind(self.container, 'mousemove', self.movePointer);
@@ -120,10 +116,6 @@ if (typeof Object.create !== 'function') {
       var self = this;
 
       self.checkboxes.after('<span class="checkbox-mask"></span>');
-    },
-    
-    delegateEventsToMask: function () {
-      
     },
     
     assembleMarkElements: function () {
@@ -203,8 +195,7 @@ if (typeof Object.create !== 'function') {
       noStyle: false,
       lineOffsetTop: 10,
       lineOffsetLeft: 10,
-      onSelectEnd: function () {
-      }
+      onSelectEnd: function () {}
     }, options);
 
     return this.each(function () {

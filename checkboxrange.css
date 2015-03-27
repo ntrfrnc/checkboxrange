@@ -20,21 +20,12 @@
   display: inline-block;
   width:30px;
   height:30px;
-  background:#49d;
+  background:#ea3;
   border-radius:50%;
-  /* box-shadow:0 0 10px #666 inset; */
   position:absolute;
   left:-5px;
   top:-5px;
   z-index:-1;
-}
-#checkbox-range-start{
-  -webkit-animation: 0.6s ease soft-appear;
-  animation: 0.6s ease soft-appear;
-}
-#checkbox-range-stop{
-  -webkit-animation: 0.6s ease soft-appear;
-  animation: 0.2s ease soft-appear;
 }
 #checkbox-range-bound-canvas{
   position:absolute;
@@ -47,30 +38,29 @@
   z-index:-1;
 }
 #checkbox-range-bound-canvas line{
-  stroke:#49d;
+  stroke:#ea3;
   stroke-width:30;
   -webkit-animation: 0.6s ease soft-appear;
   animation: 0.6s ease soft-appear;
 }
 
-@keyframes soft-appear{
-  0%{opacity:0}
-  100%{opacity:1}
-}
-
-@-webkit-keyframes soft-appear{
-  0%{opacity:0}
-  100%{opacity:1}
-}
-
 /* Checkboxes style */
+.checkbox-range-container.cr-style{
+  padding:10px;
+}
 .checkbox-range-container.cr-style > div{
   position:relative;
 }
+.checkbox-range-container.cr-style input[type="checkbox"] ~ label{
+  -ms-transform: translateY(calc(-50% + 8px));
+  -webkit-transform: translateY(calc(-50% + 8px));
+  transform: translateY(calc(-50% + 8px));
+}
 .checkbox-range-container.cr-style > label,
 .checkbox-range-container.cr-style input[type="checkbox"] ~ label{
-  padding: 2px 0 5px 25px;
   display: inline-block;
+  padding: 0px 8px 0px 25px;
+  margin: 2px 0;
 }
 .checkbox-range-container.cr-style > label input[type="checkbox"] ~ .checkbox-mask{
   margin-left:-25px;
@@ -91,11 +81,13 @@
 }
 .checkbox-range-container.cr-style input[type="checkbox"] ~ .checkbox-mask{
   position: absolute;
+  display: inline-block;
   width: 20px;
   height: 20px;
   top: 0;
   border-radius: 4px;
-
+  -webkit-box-shadow: inset 0 0 5px #222, 0 0 1px #fff, 0 0 1px #fff;
+  box-shadow: inset 0 0 5px #222, 0 0 1px #fff, 0 0 1px #fff;
   background:#444;
 }
 .checkbox-range-container.cr-style input[type="checkbox"] ~ .checkbox-mask:after {
@@ -115,7 +107,6 @@
 
   -webkit-transform: rotate(-45deg);
   -moz-transform: rotate(-45deg);
-  -o-transform: rotate(-45deg);
   -ms-transform: rotate(-45deg);
   transform: rotate(-45deg);
 }
