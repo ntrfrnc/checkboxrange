@@ -24,12 +24,12 @@ if (typeof Object.create !== 'function') {
       self.container = $(container);
       self.checkboxes = self.container.find('input[type="checkbox"]');
       self.container.addClass('checkbox-range-container');
-      
+
       if (!self.opts.noStyle) {
         self.container.addClass('cr-style');
         self.createStyleMask();
       }
-      
+
       self.indexElements(self.checkboxes);
       self.bindActions();
     },
@@ -37,12 +37,16 @@ if (typeof Object.create !== 'function') {
     bindActions: function () {
       var self = this;
 
-      self.checkboxes.on('mousedown', function () {
-        self.startPoint = $(this);
+      self.checkboxes.on('mousedown touchstart', function (e) {
+        if (e.type === 'touchstart' && e.originalEvent.touches.length !== 1) {
+          return;
+        }
+
+        self.startPoint = $(e.target);
         self.startPointIndex = self.startPoint.data(self.iKey);
         self.startPointOffLeft = self.startPoint.offset().left;
         self.startPointOffTop = self.startPoint.offset().top;
-        
+
         self.containerOffLeft = self.container.offset().left;
         self.containerOffTop = self.container.offset().top;
 
@@ -51,18 +55,29 @@ if (typeof Object.create !== 'function') {
         self.bindHoverActions();
       });
 
-      $(document).on('mouseup', function () {
+      $(document).on('mouseup touchend', function () {
         $('#checkbox-range-start, #checkbox-range-bound-canvas, #checkbox-range-stop').remove();
         self.unbind(self.container, 'mousemove');
         self.unbind(self.checkboxes, 'mouseenter');
+        self.unbind(self.checkboxes, 'touchstart.second');
       });
     },
     
     bindHoverActions: function () {
       var self = this;
 
-      self.bind(self.checkboxes, 'mouseenter', function (e) {
-        self.endPoint = $(e.target);
+      self.bind(self.checkboxes, 'mouseenter touchstart.second', function (e) {
+        if (e.type === 'touchstart') {
+          if (e.originalEvent.touches.length !== 1) {
+            self.endPoint = $(e.originalEvent.touches[1].target);
+          }
+          else {
+            return;
+          }
+        }
+        else {
+          self.endPoint = $(e.target);
+        }
         self.endPointIndex = self.endPoint.data(self.iKey);
 
         if (self.endPointIndex === self.startPointIndex) {
@@ -72,9 +87,9 @@ if (typeof Object.create !== 'function') {
         self.endPoint.after('<span id="checkbox-range-stop"></span>');
         self.magnetToEndPoint();
         self.unbind(self.container, 'mousemove');
-        self.bind(self.endPoint, 'mouseup', self.toggleCheckboxesRange, true);
+        self.bind(self.endPoint, 'mouseup touchend', self.toggleCheckboxesRange, true);
 
-        self.endPoint.one('mouseleave', function () {
+        self.endPoint.one('mouseleave touchend', function () {
           self.endPoint.off('mouseup');
           $('#checkbox-range-stop').remove();
           self.bind(self.container, 'mousemove', self.movePointer);
@@ -82,17 +97,25 @@ if (typeof Object.create !== 'function') {
       });
     },
     
-    bind: function (element, event, method, one) {
+    bind: function (element, events, method, one) {
       var self = this;
-      var eventNamespaced = event + '.' + pluginName;
+
+      var namespace = '.' + pluginName;
+      if (/ /.test(events)) {
+        var eventsArray = events.split(' ');
+        var eventsNamespaced = eventsArray.join(namespace + ' ') + namespace;
+      }
+      else {
+        var eventsNamespaced = events + namespace;
+      }
 
       if (one) {
-        element.one(eventNamespaced, function (e) {
+        element.one(eventsNamespaced, function (e) {
           return method.call(self, e);
         });
       }
       else {
-        element.on(eventNamespaced, function (e) {
+        element.on(eventsNamespaced, function (e) {
           return method.call(self, e);
         });
       }
@@ -129,19 +152,29 @@ if (typeof Object.create !== 'function') {
     
     movePointer: function (e) {
       var self = this;
-
+      
+//      TODO: implement drag&drop select on touch screen
+//      if (e.type === "touchmove") {
+//        e.preventDefault();
+//        var pageX = e.originalEvent.touches[0].pageX;
+//        var pageY = e.originalEvent.touches[0].pageY;
+//      }
+//      else {
+        var pageX = e.pageX;
+        var pageY = e.pageY;
+//      }
       switch (self.opts.path) {
         case 'horizontal':
-          var x = e.pageX - self.containerOffLeft;
+          var x = pageX - self.containerOffLeft;
           var y = self.startPointOffTop - self.containerOffTop + self.opts.lineOffsetTop;
           break;
         case 'vertical':
           var x = self.startPointOffLeft - self.containerOffLeft + self.opts.lineOffsetLeft;
-          var y = e.pageY - self.containerOffTop;
+          var y = pageY - self.containerOffTop;
           break;
         case 'any':
-          var x = e.pageX - self.containerOffLeft;
-          var y = e.pageY - self.containerOffTop;
+          var x = pageX - self.containerOffLeft;
+          var y = pageY - self.containerOffTop;
           break;
       }
       $('#checkbox-range-bound-canvas line').attr('x2', x).attr('y2', y);
@@ -177,7 +210,7 @@ if (typeof Object.create !== 'function') {
     
     toggleCheckboxesRange: function () {
       var self = this;
-
+      console.log('toggle');
       var rangeElements = self.getElementsRange();
       rangeElements.prop('checked', function () {
         if ($(this).prop('checked') === true) {
@@ -195,7 +228,8 @@ if (typeof Object.create !== 'function') {
       noStyle: false,
       lineOffsetTop: 10,
       lineOffsetLeft: 10,
-      onSelectEnd: function () {}
+      onSelectEnd: function () {
+      }
     }, options);
 
     return this.each(function () {
