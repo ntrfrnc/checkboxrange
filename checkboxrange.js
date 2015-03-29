@@ -210,7 +210,7 @@ if (typeof Object.create !== 'function') {
     
     toggleCheckboxesRange: function () {
       var self = this;
-      console.log('toggle');
+      
       var rangeElements = self.getElementsRange();
       rangeElements.prop('checked', function () {
         if ($(this).prop('checked') === true) {
