@@ -10,7 +10,7 @@ if (typeof Object.create !== 'function') {
   };
 }
 
-/*! CheckboxRange JS by Rafael Pawlos | http://git.rafaelpawlos.com/checkboxrange | MIT license */
+/*! checkboxrange v0.1.0-alpha [27-04-2015] | (c) Rafael Pawlos (http://rafaelpawlos.com) | MIT license */
 (function ($, document) {
 
   var pluginName = 'checkboxrange';

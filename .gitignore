@@ -1,0 +1,15 @@
+*.log
+*.sql
+*.sqlite
+.htaccess
+.ftppass
+.host_config
+
+*.DS_Store
+ehthumbs.db
+Icon?
+Thumbs.db
+
+rsync-exclude
+node_modules
+nbproject/private

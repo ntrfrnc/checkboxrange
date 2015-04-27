@@ -1,11 +1,13 @@
-/*! CheckboxRange CSS by Rafael Pawlos | http://rafaelpawlos.com | MIT license */
+/*! checkboxrange v0.1.0-alpha [27-04-2015] | (c) Rafael Pawlos (http://rafaelpawlos.com) | MIT license */
 
 .checkbox-range-container{
   background: transparent;
 }
 .checkbox-range-container,
 .checkbox-range-container label,
-.checkbox-range-container > div{
+.checkbox-range-container div,
+.checkbox-range-container li,
+.checkbox-range-container ul{
   position:relative;
   cursor:default;
   -webkit-touch-callout: none;
