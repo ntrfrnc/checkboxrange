@@ -152,17 +152,10 @@ if (typeof Object.create !== 'function') {
     
     movePointer: function (e) {
       var self = this;
-      
-//      TODO: implement drag&drop select on touch screen
-//      if (e.type === "touchmove") {
-//        e.preventDefault();
-//        var pageX = e.originalEvent.touches[0].pageX;
-//        var pageY = e.originalEvent.touches[0].pageY;
-//      }
-//      else {
-        var pageX = e.pageX;
-        var pageY = e.pageY;
-//      }
+
+      var pageX = e.pageX;
+      var pageY = e.pageY;
+
       switch (self.opts.path) {
         case 'horizontal':
           var x = pageX - self.containerOffLeft;
