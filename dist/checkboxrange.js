@@ -11,7 +11,7 @@ if (typeof Object.create !== 'function') {
 }
 
 /*! checkboxrange v0.1.0-alpha [27-04-2015] | (c) Rafael Pawlos (http://rafaelpawlos.com) | MIT license */
-(function ($, document) {
+(function ($, document, window) {
 
   var pluginName = 'checkboxrange';
   var storageName = 'plugin_' + pluginName;
@@ -24,6 +24,8 @@ if (typeof Object.create !== 'function') {
       self.container = $(container);
       self.checkboxes = self.container.find('input[type="checkbox"]');
       self.container.addClass('checkbox-range-container');
+      
+      self.scrollTopContainer = $(/AppleWebKit/.test(navigator.userAgent) ? "body" : "html");
 
       if (!self.opts.noStyle) {
         self.container.addClass('cr-style');
@@ -51,7 +53,7 @@ if (typeof Object.create !== 'function') {
         self.containerOffTop = self.container.offset().top;
 
         self.assembleMarkElements();
-        self.bind(self.container, 'mousemove', self.movePointer);
+        self.bind(self.container, 'mousemove touchmove', self.movePointer);
         self.bindHoverActions();
       });
 
@@ -92,7 +94,7 @@ if (typeof Object.create !== 'function') {
         self.endPoint.one('mouseleave touchend', function () {
           self.endPoint.off('mouseup');
           $('#checkbox-range-stop').remove();
-          self.bind(self.container, 'mousemove', self.movePointer);
+          self.bind(self.container, 'mousemove touchmove', self.movePointer);
         });
       });
     },
@@ -153,9 +155,17 @@ if (typeof Object.create !== 'function') {
     movePointer: function (e) {
       var self = this;
 
-      var pageX = e.pageX;
-      var pageY = e.pageY;
-
+      switch (e.type) {
+        case 'touchmove':
+          e.preventDefault();
+          var pageX = e.originalEvent.touches[0].pageX;
+          var pageY = e.originalEvent.touches[0].pageY;
+          break;
+        default:
+          var pageX = e.pageX;
+          var pageY = e.pageY;
+      }
+      
       switch (self.opts.path) {
         case 'horizontal':
           var x = pageX - self.containerOffLeft;
@@ -171,6 +181,29 @@ if (typeof Object.create !== 'function') {
           break;
       }
       $('#checkbox-range-bound-canvas line').attr('x2', x).attr('y2', y);
+      
+      self.scrollOnEdge(e);
+    },
+
+    scrollOnEdge: function (e) {
+      var self = this;
+      switch (e.type) {
+        case 'touchmove':
+          if (e.originalEvent.touches[0].clientY < 10) {
+            self.scrollTopContainer[0].scrollTop -= 10;
+          }
+          else if (e.originalEvent.touches[0].clientY > window.innerHeight - 10) {
+            self.scrollTopContainer[0].scrollTop += 10;
+          }
+          break;
+        default:
+          if (e.clientY < 30) {
+            self.scrollTopContainer[0].scrollTop -= 30;
+          }
+          else if (e.clientY > window.innerHeight - 30) {
+            self.scrollTopContainer[0].scrollTop += 30;
+          }
+      }
     },
     
     magnetToEndPoint: function () {
@@ -236,4 +269,4 @@ if (typeof Object.create !== 'function') {
       }
     });
   };
-}(jQuery, document));
+}(jQuery, document, window));
