@@ -63,9 +63,9 @@ if (typeof Object.create !== 'function') {
       $(document).on('mouseup touchend', function (e) {
         $('#checkbox-range-start, #checkbox-range-bound-canvas, #checkbox-range-stop').remove();
         self.unbind(self.container, 'mousemove');
+        self.unbind(self.container, 'touchmove');
         self.unbind(self.checkboxes, 'mouseenter');
         self.unbind(self.checkboxes, 'touchstart.second');
-        self.unbind(self.checkboxes, 'touchmove');
         if (!self.cleanStart) {
           setTimeout(function () {
             self.unbind(self.checkboxes, 'touchend');
