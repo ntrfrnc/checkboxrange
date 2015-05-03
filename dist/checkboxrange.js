@@ -32,12 +32,12 @@ if (typeof Object.create !== 'function') {
         self.container.addClass('cr-style');
         self.createStyleMask();
       }
-      
+
       self.assembleMarkElements();
       self.indexElements(self.checkboxes);
       self.bindActions();
     },
-
+    
     bindActions: function () {
       var self = this;
 
@@ -53,35 +53,19 @@ if (typeof Object.create !== 'function') {
 
         self.containerOffLeft = self.container.offset().left;
         self.containerOffTop = self.container.offset().top;
-        
+
         self.updateLineStart();
         self.startPoint.next()[0].style.visibility = 'visible';
-        
-        self.bind(self.container, 'mousemove.move touchmove.move', self.moveLine);
+
+        self.bind(self.container, 'mousemove.line touchmove.line', self.moveLine);
         self.bind(self.container, 'mousemove.edge touchmove.edge', self.scrollOnEdge);
         self.bind(self.container, 'touchmove', self.touchDragActions);
         self.bind(self.checkboxes, 'mouseenter touchstart.second', self.hoverActions);
       });
 
-      $(document).on('mouseup touchend', function (e) {
-        self.container.find('.checkbox-range-point').css({
-          visibility: 'hidden'
-        });
-        self.svgLine.attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 0);
-        self.unbind(self.container, 'mousemove');
-        self.unbind(self.container, 'touchmove');
-        self.unbind(self.checkboxes, 'mouseenter');
-        self.unbind(self.checkboxes, 'touchstart.second');
-        if (!self.cleanStart) {
-          setTimeout(function () {
-            self.unbind(self.checkboxes, 'touchend');
-            self.onTouchLeave = false;
-            self.cleanStart = true;
-          }, 20);
-        }
-      });
+      self.bind($(document),'mouseup touchend', self.clean);
     },
-
+    
     hoverActions: function (e) {
       var self = this;
 
@@ -108,7 +92,7 @@ if (typeof Object.create !== 'function') {
       self.endPoint.next()[0].style.visibility = 'visible';
       self.bind(self.endPoint, 'mouseup touchend', self.toggleCheckboxesRange, true);
 
-      self.endPoint.one('mouseleave touchend', function (e) {
+      self.bind(self.endPoint, 'mouseleave touchend', function (e) {
         self.unbind(self.endPoint, 'mouseup');
         if (e.target !== self.startPoint[0]) {
           $(e.target).next()[0].style.visibility = 'hidden';
@@ -116,7 +100,7 @@ if (typeof Object.create !== 'function') {
         self.stopMoveLine = false;
       });
     },
-
+    
     touchDragActions: function (e) {
       var self = this;
 
@@ -145,7 +129,27 @@ if (typeof Object.create !== 'function') {
         }
       }
     },
+    
+    clean: function (e) {
+      var self = this;
 
+      self.container.find('.checkbox-range-point').css({
+        visibility: 'hidden'
+      });
+      self.svgLine.attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 0);
+      self.unbind(self.container, 'mousemove');
+      self.unbind(self.container, 'touchmove');
+      self.unbind(self.checkboxes, 'mouseenter');
+      self.unbind(self.checkboxes, 'touchstart.second');
+      if (!self.cleanStart) {
+        setTimeout(function () {
+          self.unbind(self.checkboxes, 'touchend');
+          self.onTouchLeave = false;
+          self.cleanStart = true;
+        }, 20);
+      }
+    },
+    
     bind: function (element, events, method, one) {
       var self = this;
 
@@ -169,12 +173,12 @@ if (typeof Object.create !== 'function') {
         });
       }
     },
-
+    
     unbind: function (element, event) {
       var eventNamespaced = event + '.' + pluginName;
       element.off(eventNamespaced);
     },
-
+    
     indexElements: function (elements) {
       var self = this;
 
@@ -183,31 +187,31 @@ if (typeof Object.create !== 'function') {
         $.data(this, self.iKey, index);
       });
     },
-
+    
     createStyleMask: function () {
       var self = this;
 
       self.checkboxes.after('<span class="checkbox-mask"></span>');
     },
-
+    
     assembleMarkElements: function () {
       var self = this;
 
       self.checkboxes.after('<span class="checkbox-range-point"></span>');
       self.svgCanvas = $('<svg class="checkbox-range-bound-canvas"></svg>');
       self.container.append(self.svgCanvas);
-      self.svgLine = $(document.createElementNS('http://www.w3.org/2000/svg','line'));
+      self.svgLine = $(document.createElementNS('http://www.w3.org/2000/svg', 'line'));
       self.svgCanvas.append(self.svgLine);
     },
     
     updateLineStart: function () {
       var self = this;
-      
+
       var x = self.startPoint.offset().left - self.containerOffLeft + self.opts.lineOffsetLeft;
       var y = self.startPoint.offset().top - self.containerOffTop + self.opts.lineOffsetTop;
       self.svgLine.attr('x1', x).attr('y1', y).attr('x2', x).attr('y2', y);
     },
-
+    
     moveLine: function (e) {
       var self = this;
       if (!self.stopMoveLine) {
@@ -238,17 +242,17 @@ if (typeof Object.create !== 'function') {
         self.svgLine.attr('x2', x).attr('y2', y);
       }
     },
-
+    
     scrollOnEdge: function (e) {
       var self = this;
 
       switch (e.type) {
         case 'touchmove':
           if (e.originalEvent.touches[0].clientY < 20) {
-            self.scrollTopContainer[0].scrollTop -= 1;
+            self.scrollTopContainer[0].scrollTop -= 3;
           }
           else if (e.originalEvent.touches[0].clientY > window.innerHeight - 20) {
-            self.scrollTopContainer[0].scrollTop += 1;
+            self.scrollTopContainer[0].scrollTop += 3;
           }
           break;
         default:
@@ -260,7 +264,7 @@ if (typeof Object.create !== 'function') {
           }
       }
     },
-
+    
     magnetToEndPoint: function () {
       var self = this;
 
@@ -268,7 +272,7 @@ if (typeof Object.create !== 'function') {
       var y = self.endPoint.offset().top - self.containerOffTop + self.opts.lineOffsetTop;
       self.svgLine.attr('x2', x).attr('y2', y);
     },
-
+    
     getElementsRange: function () {
       var self = this;
 
@@ -288,7 +292,7 @@ if (typeof Object.create !== 'function') {
 
       return range;
     },
-
+    
     toggleCheckboxesRange: function () {
       var self = this;
       if (self.endPoint) {
