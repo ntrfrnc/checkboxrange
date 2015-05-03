@@ -24,7 +24,6 @@ if (typeof Object.create !== 'function') {
       self.container = $(container);
       self.checkboxes = self.container.find('input[type="checkbox"]');
       self.container.addClass('checkbox-range-container');
-      self.cleanStart = true;
 
       self.scrollTopContainer = $(/AppleWebKit/.test(navigator.userAgent) ? "body" : "html");
 
@@ -45,6 +44,23 @@ if (typeof Object.create !== 'function') {
       self.bind(self.checkboxes, 'mousedown touchstart', self.selectStart);
       self.bind($(window), 'keydown', self.selectStart);
       self.bind($(document),'mouseup touchend', self.clean);
+    },
+    
+    bindShiftKeyHelpers: function () {
+      var self = this;
+
+      self.bind(self.checkboxes, 'mouseup.shift', function (e) {
+        if (!self.shiftHold) {
+          self.lastChecked = $(e.target);
+        }
+      });
+
+      self.bind($(window), 'keyup', function (e) {
+        if (e.keyCode === 16) {
+          self.shiftHold = false;
+          self.clean();
+        }
+      });
     },
     
     selectStart: function (e) {
@@ -71,10 +87,10 @@ if (typeof Object.create !== 'function') {
       self.bind(self.container, 'mousemove.line touchmove.line', self.moveLine);
       self.bind(self.container, 'mousemove.edge touchmove.edge', self.scrollOnEdge);
       self.bind(self.container, 'touchmove', self.touchDragActions);
-      self.bind(self.checkboxes, 'mouseenter touchstart.second', self.hoverActions);
+      self.bind(self.checkboxes, 'mouseenter touchstart.second', self.dragActions);
     },
     
-    hoverActions: function (e) {
+    dragActions: function (e) {
       var self = this;
 
       if (e.type === 'touchstart') {
@@ -127,9 +143,9 @@ if (typeof Object.create !== 'function') {
         }
         if (!self.onTouchLeave && (!self.endPoint || target !== self.endPoint[0]) && target !== self.container[0] && (target.parentNode === self.container[0] || target.parentNode.parentNode === self.container[0])) {
           self.endPoint = $(target);
-          if (self.cleanStart) {
+          if (!self.touchEndBinded) {
             self.bind(self.checkboxes, 'touchend', self.toggleCheckboxesRange);
-            self.cleanStart = false;
+            self.touchEndBinded = true;
           }
           self.stopMoveLine = true;
           self.magnetToEndPoint();
@@ -138,23 +154,6 @@ if (typeof Object.create !== 'function') {
           self.onTouchLeave = true;
         }
       }
-    },
-    
-    bindShiftKeyHelpers: function () {
-      var self = this;
-      
-      self.bind(self.checkboxes, 'mouseup.shift', function (e) {
-        if (!self.shiftHold) {
-          self.lastChecked = $(e.target);
-        }
-      });
-
-      self.bind($(window), 'keyup', function (e) {
-        if (e.keyCode === 16) {
-          self.shiftHold = false;
-          self.clean();
-        }
-      });
     },
     
     clean: function (e) {
@@ -172,11 +171,11 @@ if (typeof Object.create !== 'function') {
       self.unbind(self.container, 'touchmove');
       self.unbind(self.checkboxes, 'mouseenter');
       self.unbind(self.checkboxes, 'touchstart.second');
-      if (!self.cleanStart) {
+      if (self.touchEndBinded) {
         setTimeout(function () {
           self.unbind(self.checkboxes, 'touchend');
           self.onTouchLeave = false;
-          self.cleanStart = true;
+          self.touchEndBinded = false;
         }, 20);
       }
     },
