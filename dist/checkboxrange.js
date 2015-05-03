@@ -10,7 +10,7 @@ if (typeof Object.create !== 'function') {
   };
 }
 
-/*! checkboxrange v0.2.0-alpha [03-05-2015] | (c) Rafael Pawlos (http://rafaelpawlos.com) | MIT license */
+/*! checkboxrange v0.3.0-alpha [03-05-2015] | (c) Rafael Pawlos (http://rafaelpawlos.com) | MIT license */
 (function ($, document, window) {
 
   var pluginName = 'checkboxrange';
