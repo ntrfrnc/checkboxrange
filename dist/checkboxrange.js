@@ -36,7 +36,7 @@ if (typeof Object.create !== 'function') {
       self.assembleMarkElements();
       self.indexElements(self.checkboxes);
       self.bindActions();
-      self.bindShiftKeyActions();
+      self.bindShiftKeyHelpers();
     },
     
     bindActions: function () {
@@ -50,11 +50,11 @@ if (typeof Object.create !== 'function') {
     selectStart: function (e) {
       var self = this;
 
-      if ((e.type === 'touchstart' && e.originalEvent.touches.length !== 1) || (e.type === 'keydown' && (e.keyCode !== 16 || !self.lastChecked)) || self.shiftSelectInProgress) {
+      if ((e.type === 'touchstart' && e.originalEvent.touches.length !== 1) || (e.type === 'keydown' && (e.keyCode !== 16 || !self.lastChecked)) || self.shiftHold) {
         return;
       }
       if(e.type === 'keydown'){
-        self.shiftSelectInProgress = true;
+        self.shiftHold = true;
       }
       
       self.startPoint = (e.type === 'keydown') ? self.lastChecked : $(e.target);
@@ -80,6 +80,8 @@ if (typeof Object.create !== 'function') {
       if (e.type === 'touchstart') {
         if (e.originalEvent.touches.length !== 1) {
           self.endPoint = $(e.originalEvent.touches[1].target);
+          self.unbind(self.container, 'touchmove');
+          self.bind(self.container, 'touchmove', function(e){e.preventDefault();});
         }
         else {
           return;
@@ -138,18 +140,18 @@ if (typeof Object.create !== 'function') {
       }
     },
     
-    bindShiftKeyActions: function () {
+    bindShiftKeyHelpers: function () {
       var self = this;
       
       self.bind(self.checkboxes, 'mouseup.shift', function (e) {
-        if (!self.shiftSelectInProgress) {
+        if (!self.shiftHold) {
           self.lastChecked = $(e.target);
         }
       });
 
       self.bind($(window), 'keyup', function (e) {
         if (e.keyCode === 16) {
-          self.shiftSelectInProgress = false;
+          self.shiftHold = false;
           self.clean();
         }
       });
@@ -158,7 +160,7 @@ if (typeof Object.create !== 'function') {
     clean: function (e) {
       var self = this;
       
-      if(self.shiftSelectInProgress){
+      if(self.shiftHold){
         return;
       }
 
@@ -312,7 +314,7 @@ if (typeof Object.create !== 'function') {
         self.endPointIndex = startPointIndexTemp;
       }
 
-      if (self.shiftSelectInProgress) {
+      if (self.shiftHold) {
         var startChecked = self.startPoint.prop('checked');
         var endChecked = self.endPoint.prop('checked');
         if ((startChecked && !endChecked) || (!startChecked && endChecked)) {
@@ -351,7 +353,7 @@ if (typeof Object.create !== 'function') {
         });
         
         self.opts.onSelectEnd();
-        self.shiftSelectInProgress = false;
+        self.shiftHold = false;
       }
     }
   };
