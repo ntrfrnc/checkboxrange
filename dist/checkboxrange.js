@@ -311,10 +311,17 @@ if (typeof Object.create !== 'function') {
         self.startPointIndex = self.endPointIndex;
         self.endPointIndex = startPointIndexTemp;
       }
-      
-      if(self.shiftSelectInProgress){
-        var range = $();
-      }else{
+
+      if (self.shiftSelectInProgress) {
+        var startChecked = self.startPoint.prop('checked');
+        var endChecked = self.endPoint.prop('checked');
+        if ((startChecked && !endChecked) || (!startChecked && endChecked)) {
+          var range = $();
+        }
+        else {
+          var range = self.startPoint;
+        }
+      } else {
         var range = self.startPoint.add(self.endPoint);
       }
 
