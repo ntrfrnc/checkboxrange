@@ -7,7 +7,7 @@ Project Overview
 
 jQuery plugin to select checkbox range by simple connect two checkboxes by drag&drop mouse cursor or touch two checkboxes (multitouch support).  
 
-**Version:** 0.1.0-alpha  
+**Version:** 0.2.0-alpha  
 **Dependencies:** jQuery ≥ 1.7  
 **Support:** Latest Mozilla Firefox, Google Chrome and IE9+.   
 

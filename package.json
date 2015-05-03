@@ -1,6 +1,6 @@
 {
   "name": "checkboxrange",
-  "version": "0.1.0-alpha",
+  "version": "0.2.0-alpha",
   "author": "Rafael Pawlos (http://rafaelpawlos.com)",
   "description": "jQuery plugin to select checkbox range by simple connect two checkboxes by drag&drop mouse cursor or touch two checkboxes (multitouch support)",
   "keywords": [
