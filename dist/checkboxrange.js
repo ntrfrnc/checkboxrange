@@ -36,34 +36,42 @@ if (typeof Object.create !== 'function') {
       self.assembleMarkElements();
       self.indexElements(self.checkboxes);
       self.bindActions();
+      self.bindShiftKeyActions();
     },
     
     bindActions: function () {
       var self = this;
 
-      self.bind(self.checkboxes, 'mousedown touchstart', function (e) {
-        if (e.type === 'touchstart' && e.originalEvent.touches.length !== 1) {
-          return;
-        }
-
-        self.startPoint = $(e.target);
-        self.startPointIndex = self.startPoint.data(self.iKey);
-        self.startPointOffLeft = self.startPoint.offset().left;
-        self.startPointOffTop = self.startPoint.offset().top;
-
-        self.containerOffLeft = self.container.offset().left;
-        self.containerOffTop = self.container.offset().top;
-
-        self.updateLineStart();
-        self.startPoint.next()[0].style.visibility = 'visible';
-
-        self.bind(self.container, 'mousemove.line touchmove.line', self.moveLine);
-        self.bind(self.container, 'mousemove.edge touchmove.edge', self.scrollOnEdge);
-        self.bind(self.container, 'touchmove', self.touchDragActions);
-        self.bind(self.checkboxes, 'mouseenter touchstart.second', self.hoverActions);
-      });
-
+      self.bind(self.checkboxes, 'mousedown touchstart', self.selectStart);
+      self.bind($(window), 'keydown', self.selectStart);
       self.bind($(document),'mouseup touchend', self.clean);
+    },
+    
+    selectStart: function (e) {
+      var self = this;
+
+      if ((e.type === 'touchstart' && e.originalEvent.touches.length !== 1) || (e.type === 'keydown' && (e.keyCode !== 16 || !self.lastChecked)) || self.shiftSelectInProgress) {
+        return;
+      }
+      if(e.type === 'keydown'){
+        self.shiftSelectInProgress = true;
+      }
+      
+      self.startPoint = (e.type === 'keydown') ? self.lastChecked : $(e.target);
+      self.startPointIndex = self.startPoint.data(self.iKey);
+      self.startPointOffLeft = self.startPoint.offset().left;
+      self.startPointOffTop = self.startPoint.offset().top;
+
+      self.containerOffLeft = self.container.offset().left;
+      self.containerOffTop = self.container.offset().top;
+
+      self.updateLineStart();
+      self.startPoint.next()[0].style.visibility = 'visible';
+
+      self.bind(self.container, 'mousemove.line touchmove.line', self.moveLine);
+      self.bind(self.container, 'mousemove.edge touchmove.edge', self.scrollOnEdge);
+      self.bind(self.container, 'touchmove', self.touchDragActions);
+      self.bind(self.checkboxes, 'mouseenter touchstart.second', self.hoverActions);
     },
     
     hoverActions: function (e) {
@@ -90,10 +98,10 @@ if (typeof Object.create !== 'function') {
       self.magnetToEndPoint();
 
       self.endPoint.next()[0].style.visibility = 'visible';
-      self.bind(self.endPoint, 'mouseup touchend', self.toggleCheckboxesRange, true);
+      self.bind(self.endPoint, 'mouseup.select touchend.select', self.toggleCheckboxesRange, true);
 
       self.bind(self.endPoint, 'mouseleave touchend', function (e) {
-        self.unbind(self.endPoint, 'mouseup');
+        self.unbind(self.endPoint, 'mouseup.select');
         if (e.target !== self.startPoint[0]) {
           $(e.target).next()[0].style.visibility = 'hidden';
         }
@@ -130,8 +138,29 @@ if (typeof Object.create !== 'function') {
       }
     },
     
+    bindShiftKeyActions: function () {
+      var self = this;
+      
+      self.bind(self.checkboxes, 'mouseup.shift', function (e) {
+        if (!self.shiftSelectInProgress) {
+          self.lastChecked = $(e.target);
+        }
+      });
+
+      self.bind($(window), 'keyup', function (e) {
+        if (e.keyCode === 16) {
+          self.shiftSelectInProgress = false;
+          self.clean();
+        }
+      });
+    },
+    
     clean: function (e) {
       var self = this;
+      
+      if(self.shiftSelectInProgress){
+        return;
+      }
 
       self.container.find('.checkbox-range-point').css({
         visibility: 'hidden'
@@ -282,8 +311,13 @@ if (typeof Object.create !== 'function') {
         self.startPointIndex = self.endPointIndex;
         self.endPointIndex = startPointIndexTemp;
       }
+      
+      if(self.shiftSelectInProgress){
+        var range = $();
+      }else{
+        var range = self.startPoint.add(self.endPoint);
+      }
 
-      var range = self.startPoint.add(self.endPoint);
       self.checkboxes.each(function (index) {
         if (index > self.startPointIndex && index < self.endPointIndex) {
           range = range.add(self.checkboxes[index]);
@@ -295,7 +329,11 @@ if (typeof Object.create !== 'function') {
     
     toggleCheckboxesRange: function () {
       var self = this;
+      
       if (self.endPoint) {
+        
+        self.lastChecked = self.endPoint;
+        
         var rangeElements = self.getElementsRange();
         rangeElements.prop('checked', function () {
           if ($(this).prop('checked') === true) {
@@ -304,7 +342,9 @@ if (typeof Object.create !== 'function') {
             $(this).prop('checked', true);
           }
         });
+        
         self.opts.onSelectEnd();
+        self.shiftSelectInProgress = false;
       }
     }
   };
