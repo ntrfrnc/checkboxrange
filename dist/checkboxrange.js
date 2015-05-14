@@ -26,9 +26,12 @@ if (typeof Object.create !== 'function') {
       self.checkboxes = self.container.find('input[type="checkbox"]');
       self.container.addClass('checkbox-range-container');
 
-      if (!self.opts.noStyle) {
+      if (!opts.noStyle) {
         self.container.addClass('cr-style');
         self.createStyleMask();
+      }
+      if (support.touch && opts.onTouchLabels){
+        self.createOnTouchLabels();
       }
 
       self.assembleMarkElements();
@@ -81,7 +84,7 @@ if (typeof Object.create !== 'function') {
       self.containerOffTop = self.container.offset().top;
 
       self.updateLineStart();
-      self.startPoint.next()[0].style.visibility = 'visible';
+      self.startPoint.next().addClass('show');
 
       self.bind(self.container, 'mousemove.line touchmove.line', self.moveLine);
       self.bind(self.container, 'mousemove.edge touchmove.edge', self.scrollOnEdge);
@@ -114,13 +117,13 @@ if (typeof Object.create !== 'function') {
       self.stopMoveLine = true;
       self.magnetToEndPoint();
 
-      self.endPoint.next()[0].style.visibility = 'visible';
+      self.endPoint.next().addClass('show');
       self.bind(self.endPoint, 'mouseup.select touchend.select', self.toggleCheckboxesRange, true);
 
       self.bind(self.endPoint, 'mouseleave touchend', function (e) {
         self.unbind(self.endPoint, 'mouseup.select');
         if (e.target !== self.startPoint[0]) {
-          $(e.target).next()[0].style.visibility = 'hidden';
+          $(e.target).next().removeClass('show');
         }
         self.stopMoveLine = false;
       });
@@ -135,7 +138,7 @@ if (typeof Object.create !== 'function') {
         if (self.endPoint && target !== self.endPoint[0] && self.onTouchLeave) {
           self.onTouchLeave = false;
           if (self.endPointIndex !== self.startPointIndex) {
-            self.endPoint.next()[0].style.visibility = 'hidden';
+            self.endPoint.next().removeClass('show');
           }
           self.stopMoveLine = false;
           self.endPoint = null;
@@ -149,7 +152,7 @@ if (typeof Object.create !== 'function') {
           self.stopMoveLine = true;
           self.magnetToEndPoint();
           self.endPointIndex = self.endPoint.data(self.iKey);
-          self.endPoint.next()[0].style.visibility = 'visible';
+          self.endPoint.next().addClass('show');
           self.onTouchLeave = true;
         }
       }
@@ -162,9 +165,7 @@ if (typeof Object.create !== 'function') {
         return;
       }
 
-      self.container.find('.checkbox-range-point').css({
-        visibility: 'hidden'
-      });
+      self.container.find('.checkbox-range-point').removeClass('show');
       self.svgLine.attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 0);
       self.unbind(self.container, 'mousemove');
       self.unbind(self.container, 'touchmove');
@@ -293,6 +294,22 @@ if (typeof Object.create !== 'function') {
           }
       }
     },
+
+    createOnTouchLabels: function () {
+      var self = this;
+      
+      self.checkboxes.each(function () {
+        var checkbox = $(this);
+        var label = checkbox.siblings('label')[0] || checkbox.parent('label')[0];
+        if (label) {
+          var labeltxt = $(label).text();
+          if (labeltxt.length > 15) {
+            labeltxt = labeltxt.substring(0, 14) + "...";
+          }
+          checkbox.parent().append('<span class="ontouch-label">' + labeltxt + '</span>');
+        }
+      });
+    },
     
     magnetToEndPoint: function () {
       var self = this;
@@ -360,12 +377,14 @@ if (typeof Object.create !== 'function') {
     var opts = $.extend(true, {
       path: 'any',
       noStyle: false,
+      onTouchLabels: true,
       lineOffsetTop: 10,
       lineOffsetLeft: 10,
       onSelectEnd: function () {}
     }, options);
     var support = {
-      stContainer: /AppleWebKit/.test(navigator.userAgent) ? document.body : document.documentElement
+      stContainer: /AppleWebKit/.test(navigator.userAgent) ? document.body : document.documentElement,
+      touch: (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch)
     };
     
     return this.each(function () {
