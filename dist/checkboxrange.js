@@ -17,15 +17,14 @@ if (typeof Object.create !== 'function') {
   var storageName = 'plugin_' + pluginName;
 
   var pluginObject = {
-    init: function (opts, container) {
+    init: function (opts, support, container) {
       var self = this;
 
       self.opts = opts;
+      self.support = support;
       self.container = $(container);
       self.checkboxes = self.container.find('input[type="checkbox"]');
       self.container.addClass('checkbox-range-container');
-
-      self.scrollTopContainer = $(/AppleWebKit/.test(navigator.userAgent) ? "body" : "html");
 
       if (!self.opts.noStyle) {
         self.container.addClass('cr-style');
@@ -279,18 +278,18 @@ if (typeof Object.create !== 'function') {
       switch (e.type) {
         case 'touchmove':
           if (e.originalEvent.touches[0].clientY < 20) {
-            self.scrollTopContainer[0].scrollTop -= 3;
+            self.support.stContainer.scrollTop -= 3;
           }
           else if (e.originalEvent.touches[0].clientY > window.innerHeight - 20) {
-            self.scrollTopContainer[0].scrollTop += 3;
+            self.support.stContainer.scrollTop += 3;
           }
           break;
         default:
           if (e.clientY < 20) {
-            self.scrollTopContainer[0].scrollTop -= 5;
+            self.support.stContainer.scrollTop -= 5;
           }
           else if (e.clientY > window.innerHeight - 20) {
-            self.scrollTopContainer[0].scrollTop += 5;
+            self.support.stContainer.scrollTop += 5;
           }
       }
     },
@@ -363,14 +362,16 @@ if (typeof Object.create !== 'function') {
       noStyle: false,
       lineOffsetTop: 10,
       lineOffsetLeft: 10,
-      onSelectEnd: function () {
-      }
+      onSelectEnd: function () {}
     }, options);
-
+    var support = {
+      stContainer: /AppleWebKit/.test(navigator.userAgent) ? document.body : document.documentElement
+    };
+    
     return this.each(function () {
       var pluginInstance = $.data(this, storageName);
       if (!pluginInstance) {
-        pluginInstance = Object.create(pluginObject).init(opts, this);
+        pluginInstance = Object.create(pluginObject).init(opts, support, this);
         $.data(this, storageName, pluginInstance);
       } else {
         $.error('Plugin is already initialized for this object.');
