@@ -143,7 +143,7 @@ if (typeof Object.create !== 'function') {
           self.stopMoveLine = false;
           self.endPoint = null;
         }
-        if (!self.onTouchLeave && (!self.endPoint || target !== self.endPoint[0]) && target !== self.container[0] && (target.parentNode === self.container[0] || target.parentNode.parentNode === self.container[0])) {
+        if (!self.onTouchLeave && !(self.endPoint && target === self.endPoint[0]) && target !== self.container[0] && self.container[0].contains(target)) {
           self.endPoint = $(target);
           if (!self.touchEndBinded) {
             self.bind(self.checkboxes, 'touchend', self.toggleCheckboxesRange);
