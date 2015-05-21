@@ -297,14 +297,14 @@ if (typeof Object.create !== 'function') {
 
     createOnTouchLabels: function () {
       var self = this;
-      
+
       self.checkboxes.each(function () {
         var checkbox = $(this);
         var label = checkbox.siblings('label')[0] || checkbox.parent('label')[0];
         if (label) {
           var labeltxt = $(label).text();
-          if (labeltxt.length > 15) {
-            labeltxt = labeltxt.substring(0, 14) + "...";
+          if (labeltxt.length > self.opts.onTouchLabelsLimit) {
+            labeltxt = labeltxt.substring(0, self.opts.onTouchLabelsLimit - 1) + "...";
           }
           checkbox.parent().append('<span class="ontouch-label">' + labeltxt + '</span>');
         }
@@ -378,6 +378,7 @@ if (typeof Object.create !== 'function') {
       path: 'any',
       noStyle: false,
       onTouchLabels: true,
+      onTouchLabelsLimit: 25,
       lineOffsetTop: 10,
       lineOffsetLeft: 10,
       onSelectEnd: function () {}
