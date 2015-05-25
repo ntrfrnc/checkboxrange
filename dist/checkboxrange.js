@@ -1,16 +1,5 @@
-'use strict';
-
-// Create objects in older browsers
-if (typeof Object.create !== 'function') {
-  Object.create = function (obj) {
-    function F() {
-    }
-    F.prototype = obj;
-    return new F();
-  };
-}
-
 /*! checkboxrange v0.4.0-alpha [15-05-2015] | (c) Rafael Pawlos (http://rafaelpawlos.com) | MIT license */
+
 (function ($, document, window) {
 
   var pluginName = 'checkboxrange';
@@ -68,8 +57,12 @@ if (typeof Object.create !== 'function') {
     selectStart: function (e) {
       var self = this;
 
-      if ((e.type === 'touchstart' && e.originalEvent.touches.length !== 1) || (e.type === 'keydown' && (e.keyCode !== 16 || !self.lastChecked)) || self.shiftHold) {
+      if ((e.type === 'touchstart' && e.originalEvent.touches.length !== 1) || (e.type === 'keydown' && !(e.keyCode === 16 && self.lastChecked)) || self.shiftHold) {
         return;
+      }
+      if (e.type === 'touchstart' && !self.firstTouched){
+        self.firstTouched = true;
+        self.unbind(self.checkboxes, 'mousedown');
       }
       if(e.type === 'keydown'){
         self.shiftHold = true;
@@ -400,3 +393,13 @@ if (typeof Object.create !== 'function') {
     });
   };
 }(jQuery, document, window));
+
+// Create objects in older browsers
+if (typeof Object.create !== 'function') {
+  Object.create = function (obj) {
+    function F() {
+    }
+    F.prototype = obj;
+    return new F();
+  };
+}
