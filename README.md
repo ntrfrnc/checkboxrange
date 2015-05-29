@@ -32,6 +32,7 @@ Option                | Values                              | Description
 `onTouchLabelsLimit:` | `25`                                | // Maximum lenght of labels (number of characters) showed on touch; default: `25`
 `lineOffsetTop:`      | `10`                                | // Top offset of bounding line origin in px; default: `10`
 `lineOffsetLeft:`     | `10`                                | // Left offset of bounding line origin in px; default: `10`
+`fireChangeEvent:`    | `false ⎮ true`                      | // Simulate change event when change checkbox state; default: `false`
 `onSelectEnd:`        | `function () {}`                    | // Callback apllied after checkbboxes selection
 
 

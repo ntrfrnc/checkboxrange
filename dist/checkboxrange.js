@@ -352,11 +352,16 @@
         self.lastChecked = self.endPoint;
         
         var rangeElements = self.getElementsRange();
-        rangeElements.prop('checked', function () {
+        rangeElements.each(function () {
           if ($(this).prop('checked') === true) {
             $(this).prop('checked', false);
           } else {
             $(this).prop('checked', true);
+          }
+          if(self.opts.fireChangeEvent){
+            var e = document.createEvent('Event');
+            e.initEvent('change', false, false);
+            this.dispatchEvent(e);
           }
         });
         
@@ -374,6 +379,7 @@
       onTouchLabelsLimit: 25,
       lineOffsetTop: 10,
       lineOffsetLeft: 10,
+      fireChangeEvent: false,
       onSelectEnd: function () {}
     }, options);
     var support = {
