@@ -123,8 +123,10 @@
 .checkbox-range-container.cr-style input[type="checkbox"] ~ .checkbox-mask:after {
   filter: alpha(opacity=0);
   opacity: 0;
-  content: '';
+  content: ' ';
   position: absolute;
+  display: block;
+  box-sizing: content-box;
   width: 9px;
   height: 5px;
   background: transparent;
