@@ -1,7 +1,7 @@
 {
   "name": "checkboxrange",
   "version": "0.4.0-alpha",
-  "author": "Rafael Pawlos (http://rafaelpawlos.com)",
+  "author": "Rafael Pawlos (pawlos.dev)",
   "description": "jQuery plugin to select range of checkboxes by simply connect two checkboxes by drag&drop, touch two checkboxes (multitouch support) or click when holding shift key.",
   "keywords": [
     "checkbox",
@@ -11,13 +11,13 @@
     "shift",
     "multitouch"
   ],
-  "homepage": "http://rafaelpawlos.com/checkboxrange",
+  "homepage": "https://pawlos.dev/checkboxrange",
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/rxl/checkboxrange.git"
+    "url": "https://github.com/ntrfrnc/checkboxrange.git"
   },
   "bugs": {
-    "url": "https://bitbucket.org/rxl/checkboxrange/issues"
+    "url": "https://github.com/ntrfrnc/checkboxrange/issues"
   },
   "license": "MIT",
   "devDependencies": {

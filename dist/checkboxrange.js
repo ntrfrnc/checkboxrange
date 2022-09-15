@@ -1,4 +1,4 @@
-/*! checkboxrange v0.4.0-alpha [15-05-2015] | (c) Rafael Pawlos (http://rafaelpawlos.com) | MIT license */
+/*! checkboxrange v0.4.0-alpha [15-05-2015] | (c) Rafael Pawlos (https://pawlos.dev) | MIT license */
 
 (function ($, document, window) {
 

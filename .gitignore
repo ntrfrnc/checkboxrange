@@ -12,4 +12,4 @@ Thumbs.db
 
 rsync-exclude
 node_modules
-nbproject/private
+.idea

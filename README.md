@@ -11,7 +11,7 @@ jQuery plugin to select range of checkboxes by simply connect two checkboxes by 
 **Dependencies:** jQuery ≥ 1.7  
 **Support:** Latest Mozilla Firefox, Google Chrome and IE9+.   
 
-[SEE DEMO](http://rafaelpawlos.com/checkboxrange)
+[SEE DEMO](https://pawlos.dev/checkboxrange)
 
 Usage:
 ----------------
@@ -45,4 +45,4 @@ CheckboxRange is released under the terms of the MIT license. See LICENSE file f
 Credits
 ----------------
 
-CheckboxRange is developed by Rafael Pawlos, http://rafaelpawlos.com
+CheckboxRange is developed by Rafael Pawlos, [pawlos.dev](https://pawlos.dev)
